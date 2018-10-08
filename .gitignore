@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Proyecto
+*.mp4
+*.mpg
+.idea
+cmake-build-debug/
