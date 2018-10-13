@@ -4,14 +4,17 @@
 #include <sstream>
 
 #include "Video.h"
+#include "utils.h"
 
-Video::Video(std::string filepath) {
-    filename = filepath;
+Video::Video(std::string path) {
+    filepath = path;
+    std::string filename = getFileName(path);
     std::ifstream file;
-    file.open(filepath);
+    file.open(path);
     std::string input;
     std::vector<int> descriptor;
 
+    int frm_num = 0;
     while (file) {
         descriptor = std::vector<int>();
         std::getline(file, input);
@@ -22,26 +25,20 @@ Video::Video(std::string filepath) {
         if (vstrings.empty())
             break;
         for (const std::string &s : vstrings) {
-            descriptor.push_back(stoi(s));
+            descriptor.push_back(std::stoi(s));
         }
-        descriptors.push_back(descriptor);
+        Frame frm(filename, frm_num, descriptor);
+        frames.push_back(frm);
+        frm_num++;
     }
 
     file.close();
 }
 
-std::string Video::getFilename() {
-    return filename;
+std::string Video::getFilePath() {
+    return filepath;
 }
 
-std::vector<std::vector<int>> Video::getDescriptors() {
-    return descriptors;
-}
-
-int Video::distance(std::vector<int> frame1, std::vector<int> frame2) {
-    int sum = 0;
-    for (int i = 0; i < frame1.size(); ++i) {
-        sum += abs(frame1[i] - frame2[i]);
-    }
-    return sum;
+std::vector<Frame> Video::getFrames() {
+    return frames;
 }

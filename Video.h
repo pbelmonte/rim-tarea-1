@@ -3,21 +3,20 @@
 
 #include <string>
 #include <vector>
+#include "Frame.h"
 
 class Video {
 
 public:
-    explicit Video(std::string filepath);
+    explicit Video(std::string path);
 
-    std::string getFilename();
+    std::string getFilePath();
 
-    std::vector<std::vector<int>> getDescriptors();
-
-    int distance(std::vector<int> frame1, std::vector<int> frame2);
+    std::vector<Frame> getFrames();
 
 private:
-    std::string filename;
-    std::vector<std::vector<int>> descriptors;
+    std::string filepath;
+    std::vector<Frame> frames;
 };
 
 
