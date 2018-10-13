@@ -96,12 +96,6 @@ std::vector<int> getVector(const cv::Mat &frame) {
 
     std::vector<int> vector(framesize * framesize);
 
-    /*cv::MatIterator_<uchar> it, end;
-    for (it = small_frame.begin<uchar>(), end = small_frame.end<uchar>(); it != end; ++it) {
-        vector.push_back(*it);
-        std::cout << *it << std::endl;
-    }*/
-
     for (int i = 0; i < small_frame.rows; ++i) {
         for (int j = 0; j < small_frame.cols; ++j) {
             vector.push_back(small_frame.at<uchar>(i,j));
