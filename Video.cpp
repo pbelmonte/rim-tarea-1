@@ -19,7 +19,7 @@ Video::Video(std::string filepath) {
         std::istream_iterator<std::string> begin(ss);
         std::istream_iterator<std::string> end;
         std::vector<std::string> vstrings(begin, end);
-        if (vstrings.size() == 0)
+        if (vstrings.empty())
             break;
         for (const std::string &s : vstrings) {
             descriptor.push_back(stoi(s));

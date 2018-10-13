@@ -7,10 +7,10 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(extraccion extraccion.cpp Video.cpp Video.h)
+add_executable(extraccion extraccion.cpp Video.cpp Video.h utils.h utils.cpp)
 
 target_link_libraries(extraccion ${OpenCV_LIBS})
 
-add_executable(busqueda busqueda.cpp Video.cpp Video.h)
+add_executable(busqueda busqueda.cpp Video.cpp Video.h utils.h utils.cpp)
 
 target_link_libraries(busqueda ${OpenCV_LIBS})
