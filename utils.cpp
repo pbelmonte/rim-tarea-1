@@ -58,3 +58,23 @@ std::string getFileExt(const std::string& s) {
 
     return("");
 }
+
+// Cambiar la extension de un archivo
+std::string changeFileExt(std::string s, const std::string &from, const std::string &to) {
+
+    size_t start_pos = s.rfind(from);
+    if(start_pos == std::string::npos)
+        return "";
+    s.replace(start_pos, from.length(), to);
+    return s;
+}
+
+// Obtener el nombre del archivo
+std::string getFileName(const std::string &s) {
+    std::string st = changeFileExt(s, getFileExt(s), "");
+    size_t i = st.rfind('/', st.length());
+    if (i != std::string::npos) {
+        return st.substr(i+1, s.length() - 1);
+    }
+    return "";
+}

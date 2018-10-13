@@ -14,17 +14,6 @@
 const int frameskip = 10; // frames que se salta el programa al generar los descriptores
 const int framesize = 10; // tamano de los frames chicos
 
-// Cambiar la extension de un archivo
-std::string changeFileExt(std::string s, const std::string &from, const std::string &to) {
-
-    size_t start_pos = s.rfind(from);
-    if(start_pos == std::string::npos)
-        return "";
-    s.replace(start_pos, from.length(), to);
-    return s;
-
-}
-
 // Obtener el vector descriptor de un frame
 std::vector<int> getVector(const cv::Mat &frame) {
 
