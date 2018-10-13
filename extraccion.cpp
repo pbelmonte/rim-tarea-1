@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 #include <fstream>
-#include <tuple>
+#include <utility>
 
 #include "opencv2/core.hpp"
 #include "opencv2/videoio.hpp"
@@ -48,7 +48,7 @@ std::vector<int> getVector(const cv::Mat &frame) {
 }
 
 // Obtener descriptores de un video completo
-std::tuple<std::string, std::vector<std::vector<int>>> getDescriptores(const std::string &video) {
+std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std::string &video) {
 
     cv::VideoCapture cap(video);
 
@@ -71,11 +71,11 @@ std::tuple<std::string, std::vector<std::vector<int>>> getDescriptores(const std
         }
     }
 
-    return std::make_tuple(video, vectores);
+    return std::make_pair(video, vectores);
 }
 
 // Generar un vector con los descriptores de todos los comerciales
-std::vector<std::tuple<std::string, std::vector<std::vector<int>>>> getComerciales(const std::string &dirname) {
+std::vector<std::pair<std::string, std::vector<std::vector<int>>>> getComerciales(const std::string &dirname) {
 
     std::vector<std::string> files = listar_archivos(dirname);
     std::vector<std::string> comerciales;
@@ -88,7 +88,7 @@ std::vector<std::tuple<std::string, std::vector<std::vector<int>>>> getComercial
         }
     }
 
-    std::vector<std::tuple<std::string, std::vector<std::vector<int>>>> descriptores;
+    std::vector<std::pair<std::string, std::vector<std::vector<int>>>> descriptores;
 
     for (const std::string & fullpath : comerciales) {
         descriptores.push_back(getDescriptores(fullpath));
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Obteniendo video..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::tuple<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
+    std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
 
     std::string outputfile = std::get<0>(video);
     save(std::get<1>(video), changeFileExt(outputfile, getFileExt(outputfile), "txt"));
@@ -138,9 +138,9 @@ int main(int argc, char *argv[]) {
     std::cout << "Obteniendo comerciales..." << std::endl;
     auto start2 = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::tuple<std::string, std::vector<std::vector<int>>>> comerciales = getComerciales(dirname);
+    std::vector<std::pair<std::string, std::vector<std::vector<int>>>> comerciales = getComerciales(dirname);
 
-    for (const std::tuple<std::string, std::vector<std::vector<int>>> &comercial : comerciales) {
+    for (const std::pair<std::string, std::vector<std::vector<int>>> &comercial : comerciales) {
         outputfile = std::get<0>(comercial);
         save(std::get<1>(comercial), changeFileExt(outputfile, getFileExt(outputfile), "txt"));
     }
