@@ -23,7 +23,7 @@ std::vector<std::string> listar_archivos(const std::string &dirname);
 
 std::string getFileExt(const std::string& s);
 
-std::string changeFileExt(std::string s, const std::string &from, const std::string &to)
+std::string changeFileExt(std::string s, const std::string &from, const std::string &to);
 
 std::string getFileName(const std::string& s);
 
