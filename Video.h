@@ -7,7 +7,7 @@
 class Video {
 
 public:
-    Video(std::string name, std::vector<std::vector<int>> vector);
+    explicit Video(std::string filepath);
 
     std::string getFilename();
 

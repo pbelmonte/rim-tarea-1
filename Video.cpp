@@ -1,12 +1,33 @@
-#include <utility>
-
-#include <utility>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <sstream>
 
 #include "Video.h"
 
-Video::Video(std::string name, std::vector<std::vector<int>> vector) {
-    filename = std::move(name);
-    descriptors = std::move(vector);
+Video::Video(std::string filepath) {
+    filename = filepath;
+    std::ifstream file;
+    file.open(filepath);
+    std::string input;
+    std::vector<int> descriptor;
+
+    while (file) {
+        descriptor = std::vector<int>();
+        std::getline(file, input);
+        std::stringstream ss(input);
+        std::istream_iterator<std::string> begin(ss);
+        std::istream_iterator<std::string> end;
+        std::vector<std::string> vstrings(begin, end);
+        if (vstrings.size() == 0)
+            break;
+        for (const std::string &s : vstrings) {
+            descriptor.push_back(stoi(s));
+        }
+        descriptors.push_back(descriptor);
+    }
+
+    file.close();
 }
 
 std::string Video::getFilename() {
