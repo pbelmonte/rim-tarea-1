@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
     std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
 
     std::string outputfile = std::get<0>(video);
-    save(std::get<1>(video), changeFileExt(outputfile, getFileExt(outputfile), "txt"));
+    save(std::get<1>(video), changeFile(outputfile, getFileExt(outputfile), "txt"));
 
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish - start;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 
     for (const std::pair<std::string, std::vector<std::vector<int>>> &comercial : comerciales) {
         outputfile = std::get<0>(comercial);
-        save(std::get<1>(comercial), changeFileExt(outputfile, getFileExt(outputfile), "txt"));
+        save(std::get<1>(comercial), changeFile(outputfile, getFileExt(outputfile), "txt"));
     }
 
     auto finish2 = std::chrono::high_resolution_clock::now();
