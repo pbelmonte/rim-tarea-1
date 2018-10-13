@@ -42,4 +42,6 @@ Makefile
 cmake_install.cmake
 busqueda
 extraccion
+comerciales/*.txt
+television/*.txt
 
