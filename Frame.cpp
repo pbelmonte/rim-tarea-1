@@ -38,3 +38,12 @@ int Frame::distancia(Frame frm) {
     }
     return sum;
 }
+
+void Frame::addVecino(Frame vecino, int dis) {
+    vecinos.insert(std::make_pair(vecino, dis));
+    if (vecinos.size() > k_vecinos) {
+        auto it = vecinos.end();
+        it--;
+        vecinos.erase(it);
+    }
+}

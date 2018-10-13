@@ -39,6 +39,6 @@ std::string Video::getFilePath() {
     return filepath;
 }
 
-std::vector<Frame> Video::getFrames() {
+std::vector<Frame> Video::getFrames() const {
     return frames;
 }

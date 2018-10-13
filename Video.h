@@ -12,7 +12,7 @@ public:
 
     std::string getFilePath();
 
-    std::vector<Frame> getFrames();
+    std::vector<Frame> getFrames() const;
 
 private:
     std::string filepath;

@@ -8,13 +8,13 @@
 
 class Frame {
 
+public:
     struct comp {
         bool operator() (const std::pair<Frame, int>& lhs, const std::pair<Frame, int>& rhs) const {
             return lhs.second < rhs.second;
         }
     };
 
-public:
     Frame(std::string vid, int num, std::vector<int> des);
 
     std::string getVideoName();
@@ -27,11 +27,14 @@ public:
 
     int distancia(Frame frm);
 
+    void addVecino(Frame vecino, int dis);
+
 private:
     std::string video_name;
     int numero;
     std::vector<int> descriptor;
     std::set<std::pair<Frame, int>, comp> vecinos;
+    const int k_vecinos = 3;
 };
 
 
