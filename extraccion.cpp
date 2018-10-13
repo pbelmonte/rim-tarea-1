@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <fstream>
 
 #include "opencv2/core.hpp"
 #include "opencv2/videoio.hpp"
@@ -67,9 +69,10 @@ std::vector<std::string> listar_archivos(const std::string &dirname) {
 }
 
 
-const int frameskip = 10;
-const int framesize = 14;
+const int frameskip = 10; // frames que se salta el programa al generar los descriptores
+const int framesize = 14; // tamano de los frames chicos
 
+// Obtener la extension de un archivo
 std::string getFileExt(const std::string& s) {
 
     size_t i = s.rfind('.', s.length());
@@ -80,15 +83,16 @@ std::string getFileExt(const std::string& s) {
     return("");
 }
 
+// Obtener el vector descriptor de un frame
 std::vector<int> getVector(const cv::Mat &frame) {
 
     cv::Mat gray_frame;
 
-    cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(frame, gray_frame, cv::COLOR_BGR2GRAY); // escala de grises
 
     cv::Mat small_frame;
 
-    cv::resize(gray_frame, small_frame, cv::Size(framesize, framesize));
+    cv::resize(gray_frame, small_frame, cv::Size(framesize, framesize)); // bajar la resolucion
 
     std::vector<int> vector(framesize * framesize);
 
@@ -107,9 +111,14 @@ std::vector<int> getVector(const cv::Mat &frame) {
     return vector;
 }
 
-std::vector<std::vector<int>> getDescriptor(const std::string &comercial) {
+// Obtener descriptor de un video completo
+std::vector<std::vector<int>> getDescriptor(const std::string &video) {
 
-    cv::VideoCapture cap(comercial);
+    cv::VideoCapture cap(video);
+
+    if (!cap.isOpened()) {
+        std::cout << "no se pudo abrir el video \"" << video << "\"" << std::endl;
+    }
 
     std::vector<std::vector<int>> vectores;
 
@@ -129,11 +138,13 @@ std::vector<std::vector<int>> getDescriptor(const std::string &comercial) {
     return vectores;
 }
 
-std::vector<std::vector<std::vector<int>>> getComerciales(std::string dirname) {
+// Generar un vector con los descriptores de todos los comerciales
+std::vector<std::vector<std::vector<int>>> getComerciales(const std::string &dirname) {
 
     std::vector<std::string> files = listar_archivos(dirname);
-    std::vector<std::string> comerciales(files.size());
+    std::vector<std::string> comerciales;
 
+    // se eliminan los archivos que no son videos
     for (const std::string & fullpath : files) {
         std::string ext = getFileExt(fullpath);
         if (ext == "mpg" || ext == "mp4") {
@@ -157,17 +168,24 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    //const std::string source(argv[1]);
-    const std::string dirname(argv[2]);
+    const std::string source(argv[1]); // video de television
+    const std::string dirname(argv[2]); // directorio de comerciales
 
+    std::cout << "Obteniendo video..." << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<int>> video = getDescriptor(source);
+    // std::ofstream video_file ("descriptor_video.txt");
+    // video_file << video << std::endl;
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = finish - start;
+    std::cout << "Tiempo en obtener video: " << elapsed.count() << " segundos" << std::endl;
+
+    std::cout << "Obteniendo comerciales..." << std::endl;
+    auto start2 = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<std::vector<int>>> comerciales = getComerciales(dirname);
-
-    /*cv::VideoCapture inputVideo(source);
-
-    if(!inputVideo.isOpened())
-        return -1;
-
-    std::cout << "buena" << std::endl;*/
+    auto finish2 = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed2 = finish2 - start2;
+    std::cout << "Tiempo en obtener comerciales: " << elapsed2.count() << " segundos" << std::endl;
 
     return 0;
 }
