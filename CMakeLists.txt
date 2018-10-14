@@ -14,3 +14,7 @@ target_link_libraries(extraccion ${OpenCV_LIBS})
 add_executable(busqueda busqueda.cpp Video.cpp Video.h utils.h utils.cpp Frame.cpp Frame.h)
 
 target_link_libraries(busqueda ${OpenCV_LIBS})
+
+add_executable(deteccion deteccion.cpp Video.cpp Video.h utils.h utils.cpp Frame.cpp Frame.h)
+
+target_link_libraries(deteccion ${OpenCV_LIBS})
