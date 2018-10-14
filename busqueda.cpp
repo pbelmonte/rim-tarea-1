@@ -1,12 +1,8 @@
-#include <iostream>
-#include <vector>
 #include <fstream>
 #include <chrono>
 #include "Video.h"
 
 #include "utils.h"
-
-const int k_vecinos = 3; // numero de vecinos mas cercanos de cada frame
 
 // Generar un vector con todos los comerciales
 std::vector<Video> getComerciales(const std::string &dirname) {
@@ -53,6 +49,7 @@ void getDistancias(std::vector<Frame> &videoFrames, const std::vector<Frame> &co
     }
 }
 
+// Guardar informacion de frames y vecinos en archivo
 void save(const std::vector<Frame> &videoFrames, const std::string &filename) {
     std::ofstream file;
     file.open(filename);
@@ -61,7 +58,7 @@ void save(const std::vector<Frame> &videoFrames, const std::string &filename) {
         file << videoFrame.getNumero();
         for (const auto &vecino : vecinos) {
             file << "          ";
-            file << std::get<0>(vecino).getVideoName() << " " << std::get<0>(vecino).getNumero() << " ";
+            file << std::get<0>(vecino).getVideoName() << " - " << std::get<0>(vecino).getNumero() << " - ";
             file << std::get<1>(vecino);
         }
         file << std::endl;
