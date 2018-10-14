@@ -13,11 +13,11 @@ Frame::Frame(std::string vid, int num, std::vector<int> des) {
     vecinos = std::set<std::pair<Frame, int>, comp>();
 }
 
-std::string Frame::getVideoName() {
+std::string Frame::getVideoName() const {
     return video_name;
 }
 
-int Frame::getNumero() {
+int Frame::getNumero() const {
     return numero;
 }
 

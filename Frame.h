@@ -17,9 +17,9 @@ public:
 
     Frame(std::string vid, int num, std::vector<int> des);
 
-    std::string getVideoName();
+    std::string getVideoName() const;
 
-    int getNumero();
+    int getNumero() const;
 
     std::vector<int> getDescriptor();
 

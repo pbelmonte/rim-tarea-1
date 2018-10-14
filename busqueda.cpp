@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <chrono>
 #include "Video.h"
 
 #include "utils.h"
@@ -49,18 +51,22 @@ void getDistancias(std::vector<Frame> &videoFrames, const std::vector<Frame> &co
             videoFrame.addVecino(comercialFrame, distancia);
         }
     }
+}
 
-    /*for (Frame videoFrame : videoFrames) {
+void save(const std::vector<Frame> &videoFrames, const std::string &filename) {
+    std::ofstream file;
+    file.open(filename);
+    for (Frame videoFrame : videoFrames) {
         std::set<std::pair<Frame, int>, Frame::comp> vecinos = videoFrame.getVecinos();
-        std::cout << vecinos.size() << std::endl;
-        std::cout << videoFrame.getVideoName() << " " << videoFrame.getNumero() << " ";
-        for (std::pair<Frame, int> par : vecinos) {
-            std::cout << "|";
-            std::cout << std::get<0>(par).getVideoName() << " " << std::get<0>(par).getNumero() << " ";
-            std::cout << std::get<1>(par);
+        file << videoFrame.getNumero();
+        for (const auto &vecino : vecinos) {
+            file << "          ";
+            file << std::get<0>(vecino).getVideoName() << " " << std::get<0>(vecino).getNumero() << " ";
+            file << std::get<1>(vecino);
         }
-        std::cout << std::endl;
-    }*/
+        file << std::endl;
+    }
+    file.close();
 }
 
 int main(int argc, char *argv[]) {
@@ -73,6 +79,9 @@ int main(int argc, char *argv[]) {
     const std::string source(argv[1]); // video de television
     const std::string dirname(argv[2]); // directorio de comerciales
 
+    std::cout << "Procesando... Esto puede tardar unos minutos" << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+
     Video video(source);
 
     std::vector<Video> comerciales = getComerciales(dirname);
@@ -80,6 +89,12 @@ int main(int argc, char *argv[]) {
     std::vector<Frame> videoFrames = video.getFrames();
 
     getDistancias(videoFrames, getFramesComerciales(comerciales));
+
+    save(videoFrames, changeFile(source, getFileName(source), getFileName(source) + "_distancias"));
+
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = finish - start;
+    std::cout << "Tiempo de procesamiento: " << elapsed.count() << " segundos" << std::endl;
 
     return 0;
 }

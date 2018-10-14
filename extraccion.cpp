@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     const std::string dirname(argv[2]); // directorio de comerciales
 
     //obtener video
-    std::cout << "Obteniendo video..." << std::endl;
+    std::cout << "Obteniendo video... Esto puede tardar unos minutos" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
 
     std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
