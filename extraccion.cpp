@@ -8,9 +8,6 @@
 
 #include "utils.h"
 
-const int frameskip = 10; // frames que se salta el programa al generar los descriptores
-const int framesize = 10; // tamano de los frames chicos
-
 // Obtener el vector descriptor de un frame
 std::vector<int> getVector(const cv::Mat &frame) {
 
@@ -112,8 +109,8 @@ int main(int argc, char *argv[]) {
 
     std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
 
-    std::string outputfile = std::get<0>(video);
-    save(std::get<1>(video), changeFile(outputfile, getFileExt(outputfile), "txt"));
+    std::string outputfile = video.first;
+    save(video.second, changeFile(outputfile, getFileExt(outputfile), "txt"));
 
     auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = finish - start;
@@ -127,8 +124,8 @@ int main(int argc, char *argv[]) {
     std::vector<std::pair<std::string, std::vector<std::vector<int>>>> comerciales = getComerciales(dirname);
 
     for (const std::pair<std::string, std::vector<std::vector<int>>> &comercial : comerciales) {
-        outputfile = std::get<0>(comercial);
-        save(std::get<1>(comercial), changeFile(outputfile, getFileExt(outputfile), "txt"));
+        outputfile = comercial.first;
+        save(comercial.second, changeFile(outputfile, getFileExt(outputfile), "txt"));
     }
 
     auto finish2 = std::chrono::high_resolution_clock::now();

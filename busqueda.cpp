@@ -58,8 +58,8 @@ void save(const std::vector<Frame> &videoFrames, const std::string &filename) {
         file << videoFrame.getNumero();
         for (const auto &vecino : vecinos) {
             file << "          ";
-            file << std::get<0>(vecino).getVideoName() << " - " << std::get<0>(vecino).getNumero() << " - ";
-            file << std::get<1>(vecino);
+            file << vecino.first.getVideoName() << " - " << vecino.first.getNumero() << " - ";
+            file << vecino.second;
         }
         file << std::endl;
     }
