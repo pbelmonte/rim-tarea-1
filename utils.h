@@ -27,4 +27,7 @@ std::string changeFile(std::string s, const std::string &from, const std::string
 
 std::string getFileName(const std::string& s);
 
+const int frameskip = 10; // frames que se salta el programa al generar los descriptores
+const int framesize = 10; // tamano de los frames chicos
+
 #endif //RIM_TAREA_1_UTILS_H
