@@ -113,7 +113,8 @@ void detectar(std::vector<Frame> frames) {
 
                 Stats newStats(ini, numero, punt + 1, frm.getNumero());
                 if (ante_video == frm.getNumero()) { // estamos en otro vecino del mismo frame
-                    newStats.setFrameAnterior(ante);
+                    if (ante < numero)
+                        newStats.setFrameAnterior(ante);
                 }
 
                 else if (numero - ante > 0 && numero - ante <= 2) {
@@ -126,16 +127,20 @@ void detectar(std::vector<Frame> frames) {
 
                 comerciales[comercial] = newStats;
 
-                for (auto &com : comerciales) {
-                    if (com.first != comercial) {
-                        com.second.setPuntaje(com.second.getPuntaje() - 6);
-                        if (com.second.getPuntaje() <= 0) {
-                            comerciales.erase(com.first);
+                auto it = comerciales.begin();
+
+                while (it != comerciales.end()) {
+                    if (it->first != comercial) {
+                        it->second.setPuntaje(it->second.getPuntaje() - 4);
+                        if (it->second.getPuntaje() <= 0) {
+                            it = comerciales.erase(it);
                         }
+                    } else {
+                        it++;
                     }
                 }
 
-                if (comerciales[comercial].getPuntaje() > 200) {
+                if (comerciales[comercial].getPuntaje() > 30) {
 
                     int end = getEnd(comercial, frm.getNumero(), frames);
                     float fraps = fps / frameskip;
@@ -170,6 +175,19 @@ int main(int argc, char *argv[]) {
 
     detectar(frames);
 
+    int i = 0;
+    for (Frame videoFrame : frames) {
+        if (i > 20000) break;
+        i++;
+        std::set<std::pair<Frame, int>, Frame::comp> vecinos = videoFrame.getVecinos();
+        std::cout << videoFrame.getNumero();
+        for (const auto &vecino : vecinos) {
+            std::cout << "          ";
+            std::cout << vecino.first.getVideoName() << " - " << vecino.first.getNumero() << " - ";
+            std::cout << vecino.second;
+        }
+        std::cout << std::endl;
+    }
 
     return 0;
 }
