@@ -6,6 +6,7 @@
 #include "Frame.h"
 #include "Stats.h"
 
+// Divide un string usando un separador y guarda el resultado en un vector
 size_t split(const std::string &txt, std::vector<std::string> &strs, const std::string &separator)
 {
     size_t pos = txt.find(separator);
@@ -24,6 +25,10 @@ size_t split(const std::string &txt, std::vector<std::string> &strs, const std::
     return strs.size();
 }
 
+/*
+ * Genera un objeto Frame a partir de un string del tipo "nombre - numero - distancia" que sera un vecino
+ * como no se tiene (ni se necesita) un vector descriptor se crea con un vector vacio
+ */
 Frame createVecino(const std::string &input) {
     std::vector<std::string> vector;
 
@@ -69,9 +74,15 @@ std::vector<Frame> getFrames(const std::string &filename) {
     return frames;
 }
 
+// Encuentra el frame en donde se termina el comercial
 int getEnd(const std::string &comercial, int frame_actual, std::vector<Frame> frames) {
+
+    // la cantidad de veces que no se ha encontrado un frame del comercial entre los vecinos del frame del video
     int strikes = 0;
+
+    // frame de termino
     int end = frame_actual;
+
     for (int i = frame_actual; i < frames.size(); i++) {
         std::set<std::pair<Frame, int>, Frame::comp> vecinos = frames[i].getVecinos();
         for (auto frm : vecinos) {
@@ -83,18 +94,23 @@ int getEnd(const std::string &comercial, int frame_actual, std::vector<Frame> fr
         }
         strikes++;
 
-        if (strikes == 10) {
+        if (strikes == 10) { // ya se acabó el comercial
             return end;
         }
     }
     return 0;
 }
 
+/*
+ * Detecta los comerciales y guarda los datos en el archivo detecciones.txt
+ * se usa un sistema de puntos, si se encuentra un comercial, se le aumenta el puntaje a este
+ */
 void detectar(std::vector<Frame> frames) {
 
     std::ofstream file;
     file.open("detecciones.txt");
 
+    // comerciales que tienen puntos
     std::unordered_map<std::string, Stats> comerciales;
 
     int i = 0;
@@ -127,6 +143,11 @@ void detectar(std::vector<Frame> frames) {
 
                 comerciales[comercial] = newStats;
 
+
+                /*
+                 * Se le restan puntos a los comerciales que no eran vecinos y si tienen un puntaje menor o igual
+                 * a 0 se eliminan del map de comerciales
+                 */
                 auto it = comerciales.begin();
 
                 while (it != comerciales.end()) {
@@ -140,6 +161,9 @@ void detectar(std::vector<Frame> frames) {
                     }
                 }
 
+                /* Si se alcanza un puntaje alto se asume que se encontro un comercial, solo hay que encontrar donde
+                 * termina usando la funcion getEnd
+                 */
                 if (comerciales[comercial].getPuntaje() > 30) {
 
                     int end = getEnd(comercial, frm.getNumero(), frames);
@@ -148,7 +172,7 @@ void detectar(std::vector<Frame> frames) {
                     float fin = end / fraps;
                     float largo = fin - inicio;
 
-
+                    // Se guardan los datos en el archivo
                     file << frm.getVideoName() << "\t" << inicio << "\t" << largo << "\t" << comercial;
                     file << std::endl;
                     i = end;
@@ -174,20 +198,6 @@ int main(int argc, char *argv[]) {
     std::vector<Frame> frames = getFrames(source);
 
     detectar(frames);
-
-    int i = 0;
-    for (Frame videoFrame : frames) {
-        if (i > 20000) break;
-        i++;
-        std::set<std::pair<Frame, int>, Frame::comp> vecinos = videoFrame.getVecinos();
-        std::cout << videoFrame.getNumero();
-        for (const auto &vecino : vecinos) {
-            std::cout << "          ";
-            std::cout << vecino.first.getVideoName() << " - " << vecino.first.getNumero() << " - ";
-            std::cout << vecino.second;
-        }
-        std::cout << std::endl;
-    }
 
     return 0;
 }
