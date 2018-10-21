@@ -34,7 +34,7 @@ private:
     int numero;
     std::vector<int> descriptor;
     std::set<std::pair<Frame, int>, comp> vecinos;
-    const int k_vecinos = 3;
+    const int k_vecinos = 1; // cantidad de vecinos que se van a considerar
 };
 
 
