@@ -49,8 +49,6 @@ std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std:
 
     int porcentaje_anterior = -1;
 
-    std::cout << "Progreso: " << porcentaje << "%" << std::flush;
-
     int frame = 0;
     while(cap.grab()) {
         if (frame % frameskip == 0) {
@@ -58,7 +56,20 @@ std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std:
             i++;
             porcentaje = (i * 100) / total_frames;
             if (porcentaje - porcentaje_anterior == 1 && !esComercial) {
-                std::cout << "\r" << "Progreso: " << porcentaje << "%" << std::flush;
+                std::cout << "\r" << "Progreso: [";
+                if (porcentaje < 100)
+                    std::cout << " ";
+                if (porcentaje < 10)
+                    std::cout << " ";
+                std::cout << porcentaje << "%] ";
+                std::cout << "[";
+                for (int j = 1; j <= 100; j++) {
+                    if (j <= porcentaje)
+                        std::cout << "#";
+                    else
+                        std::cout << ".";
+                }
+                std::cout << "]" << std::flush;
                 porcentaje_anterior = porcentaje;
             }
 
@@ -72,7 +83,8 @@ std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std:
         }
     }
 
-    std::cout << std::endl;
+    if (!esComercial)
+        std::cout << std::endl;
 
     return std::make_pair(video, vectores);
 }

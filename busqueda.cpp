@@ -53,7 +53,20 @@ void getDistancias(std::vector<Frame> &videoFrames, const std::vector<Frame> &co
         i++;
         porcentaje = (int) ((i * 100) / videoFrames.size());
         if (porcentaje - porcentaje_anterior == 1) {
-            std::cout << "\r" << "Progreso: " << porcentaje << "%" << std::flush;
+            std::cout << "\r" << "Progreso: [";
+            if (porcentaje < 100)
+                std::cout << " ";
+            if (porcentaje < 10)
+                std::cout << " ";
+            std::cout << porcentaje << "%] ";
+            std::cout << "[";
+            for (int j = 1; j <= 100; j++) {
+                if (j <= porcentaje)
+                    std::cout << "#";
+                else
+                    std::cout << ".";
+            }
+            std::cout << "]" << std::flush;
             porcentaje_anterior = porcentaje;
         }
 
