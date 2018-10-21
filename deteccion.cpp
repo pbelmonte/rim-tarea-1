@@ -1,19 +1,10 @@
 #include <utility>
-
 #include <fstream>
 #include <iterator>
-#include <sstream>
+#include <unordered_map>
 #include "utils.h"
 #include "Frame.h"
-
-void dump(std::ostream &out, const std::vector<std::string> &v)
-{
-    for (const auto &i : v) {
-        out << '\'' << i << '\'' << ' ';
-    }
-
-    out << std::endl;
-}
+#include "Stats.h"
 
 size_t split(const std::string &txt, std::vector<std::string> &strs, const std::string &separator)
 {
@@ -49,7 +40,8 @@ std::vector<Frame> getFrames(const std::string &filename) {
     file.open(filename);
     std::string input;
 
-    std::string nombre = changeFile(filename, "_distancias.txt", "");
+    std::string nombre = changeFile(filename, "_distancias", "");
+    nombre = getFileName(nombre);
 
     std::vector<Frame> frames;
 
@@ -77,11 +69,107 @@ std::vector<Frame> getFrames(const std::string &filename) {
     return frames;
 }
 
+int getEnd(const std::string &comercial, int frame_actual, std::vector<Frame> frames) {
+    int strikes = 0;
+    int end = frame_actual;
+    for (int i = frame_actual; i < frames.size(); i++) {
+        std::set<std::pair<Frame, int>, Frame::comp> vecinos = frames[i].getVecinos();
+        for (auto frm : vecinos) {
+            if (frm.first.getVideoName() == comercial) {
+                end = i;
+                strikes = 0;
+                break;
+            }
+        }
+        strikes++;
+
+        if (strikes == 10) {
+            return end;
+        }
+    }
+    return 0;
+}
+
+void detectar(std::vector<Frame> frames) {
+
+    std::ofstream file;
+    file.open("detecciones.txt");
+
+    std::unordered_map<std::string, Stats> comerciales;
+
+    int i = 0;
+    while (i < frames.size()) {
+        Frame frm = frames[i];
+        std::set<std::pair<Frame, int>, Frame::comp> vecinos = frm.getVecinos();
+        for (const auto &vecino : vecinos) {
+            std::string comercial = vecino.first.getVideoName();
+            int numero = vecino.first.getNumero();
+
+            if (comerciales.count(comercial)) { // si el comercial esta en el map
+                int ini = comerciales[comercial].getFrameInicio();
+                int ante = comerciales[comercial].getFrameAnterior();
+                int punt = comerciales[comercial].getPuntaje();
+                int ante_video = comerciales[comercial].getFrameVideoAnterior();
+
+                Stats newStats(ini, numero, punt + 1, frm.getNumero());
+                if (ante_video == frm.getNumero()) { // estamos en otro vecino del mismo frame
+                    newStats.setFrameAnterior(ante);
+                }
+
+                else if (numero - ante > 0 && numero - ante <= 2) {
+                    newStats.setPuntaje(newStats.getPuntaje() + 1);
+                }
+
+                else {
+                    newStats.setPuntaje(newStats.getPuntaje() - 1);
+                }
+
+                comerciales[comercial] = newStats;
+
+                for (auto &com : comerciales) {
+                    if (com.first != comercial) {
+                        com.second.setPuntaje(com.second.getPuntaje() - 6);
+                        if (com.second.getPuntaje() <= 0) {
+                            comerciales.erase(com.first);
+                        }
+                    }
+                }
+
+                if (comerciales[comercial].getPuntaje() > 200) {
+
+                    int end = getEnd(comercial, frm.getNumero(), frames);
+                    float fraps = fps / frameskip;
+                    float inicio = comerciales[comercial].getFrameInicio() / fraps;
+                    float fin = end / fraps;
+                    float largo = fin - inicio;
+
+
+                    file << frm.getVideoName() << "\t" << inicio << "\t" << largo << "\t" << comercial;
+                    file << std::endl;
+                    i = end;
+                    comerciales.erase(comercial);
+                    break;
+                }
+
+            }
+            else { // si el comercial no esta en el map
+                Stats newStats(frm.getNumero(), numero, 4, frm.getNumero());
+                comerciales[comercial] = newStats;
+            }
+        }
+
+        i++;
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     const std::string source(argv[1]); // video
 
     std::vector<Frame> frames = getFrames(source);
+
+    detectar(frames);
+
 
     return 0;
 }
