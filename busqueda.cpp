@@ -41,12 +41,29 @@ std::vector<Frame> getFramesComerciales(std::vector<Video> comerciales) {
 
 // Guardar distancias entre frames
 void getDistancias(std::vector<Frame> &videoFrames, const std::vector<Frame> &comercialesFrames) {
+
+    int i = 0;
+
+    int porcentaje = 0;
+
+    int porcentaje_anterior = -1;
+
     for (Frame& videoFrame : videoFrames) {
+
+        i++;
+        porcentaje = (int) ((i * 100) / videoFrames.size());
+        if (porcentaje - porcentaje_anterior == 1) {
+            std::cout << "\r" << "Progreso: " << porcentaje << "%" << std::flush;
+            porcentaje_anterior = porcentaje;
+        }
+
         for (const Frame &comercialFrame : comercialesFrames) {
             int distancia = videoFrame.distancia(comercialFrame);
             videoFrame.addVecino(comercialFrame, distancia);
         }
     }
+    
+    std::cout << std::endl;
 }
 
 // Guardar informacion de frames y vecinos en archivo

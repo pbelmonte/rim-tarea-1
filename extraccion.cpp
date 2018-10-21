@@ -31,7 +31,7 @@ std::vector<int> getVector(const cv::Mat &frame) {
 }
 
 // Obtener descriptores de un video completo
-std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std::string &video) {
+std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std::string &video, bool esComercial) {
 
     cv::VideoCapture cap(video);
 
@@ -41,9 +41,27 @@ std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std:
 
     std::vector<std::vector<int>> vectores;
 
+    int total_frames = (int) cap.get(cv::CAP_PROP_FRAME_COUNT) / frameskip;
+
+    int i = 0;
+
+    int porcentaje = 0;
+
+    int porcentaje_anterior = -1;
+
+    std::cout << "Progreso: " << porcentaje << "%" << std::flush;
+
     int frame = 0;
     while(cap.grab()) {
         if (frame % frameskip == 0) {
+
+            i++;
+            porcentaje = (i * 100) / total_frames;
+            if (porcentaje - porcentaje_anterior == 1 && !esComercial) {
+                std::cout << "\r" << "Progreso: " << porcentaje << "%" << std::flush;
+                porcentaje_anterior = porcentaje;
+            }
+
             cv::Mat frame_mat;
             cap.retrieve(frame_mat);
             vectores.push_back(getVector(frame_mat));
@@ -53,6 +71,8 @@ std::pair<std::string, std::vector<std::vector<int>>> getDescriptores(const std:
             continue;
         }
     }
+
+    std::cout << std::endl;
 
     return std::make_pair(video, vectores);
 }
@@ -74,7 +94,7 @@ std::vector<std::pair<std::string, std::vector<std::vector<int>>>> getComerciale
     std::vector<std::pair<std::string, std::vector<std::vector<int>>>> descriptores;
 
     for (const std::string & fullpath : comerciales) {
-        descriptores.push_back(getDescriptores(fullpath));
+        descriptores.push_back(getDescriptores(fullpath, true));
     }
 
     return descriptores;
@@ -107,7 +127,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Obteniendo video... Esto puede tardar unos minutos" << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source);
+    std::pair<std::string, std::vector<std::vector<int>>> video = getDescriptores(source, false);
 
     std::string outputfile = video.first;
     save(video.second, changeFile(outputfile, getFileExt(outputfile), "txt"));
