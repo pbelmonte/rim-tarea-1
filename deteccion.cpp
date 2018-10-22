@@ -62,7 +62,7 @@ std::vector<Frame> getFrames(const std::string &filename) {
 
         Frame frame(nombre, std::stoi(splitted[0]), std::vector<int>());
 
-        for (int i = 1; i <= 3 ; ++i) {
+        for (int i = 1; i < splitted.size(); ++i) {
             frame.addVecino(createVecino(splitted[i]), i);
         }
 
