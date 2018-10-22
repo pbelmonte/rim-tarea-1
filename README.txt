@@ -11,10 +11,8 @@ ejecutarla en GNU/Linux, por lo que se recomienda usar alguna distro de GNU/Linu
 
 Estando en una terminal en el directorio donde se encuentran los archivos entregados ejecutar los siguientes comandos:
 
-```
 $ cmake .
 $ cmake --build .
-```
 
 Lo cual genera 3 ejecutables: extraccion, busqueda y deteccion.
 
@@ -31,9 +29,7 @@ El programa recibe 2 parámetros: el video sobre el cual se van a buscar comerci
 Por ejemplo, si se tiene un video llamado mega-2014_04_10.mp4 en un directorio llamado television dentro del directorio de trabajo y los 
 comerciales en un directorio llamado comerciales se puede ejecutar con el siguiente comando:
 
-```
 $ ./extraccion television/mega-2014_04_11.mp4 comerciales
-```
 
 Este proceso tarda unos 2 o 3 minutos, dependiendo de la velocidad del computador.
 
@@ -49,9 +45,7 @@ pero se cambia la extensión del video por .txt.
 
 Continuando con el ejemplo anterior:
 
-```
 $ ./busqueda television/mega-2014_04_11.txt comerciales
-```
 
 Este proceso tarda unos 4 o 5 minutos, dependiendo de la velocidad del computador.
 
@@ -68,15 +62,11 @@ El programa recibe como parámetro el archivo generado en el paso anterior.
 
 Continuando con el ejemplo:
 
-```
 $ ./deteccion television/mega-2014_04_11_distancias.txt
-```
 
 Este proceso tarda solo un par de segundos, y al finalizar se habrá generado en el directorio de trabajo un archivo "detecciones.txt", el cual
 contiene el reporte final de detecciones de comerciales para el video.
 
 Así, se puede evaluar el resultado con el comando:
 
-```
 $ python evaluar.py detecciones.txt
-```
