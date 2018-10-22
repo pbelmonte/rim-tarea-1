@@ -35,6 +35,8 @@ int Frame::distancia(Frame frm) {
 
 void Frame::addVecino(Frame vecino, int dis) {
     vecinos.insert(std::make_pair(vecino, dis));
+
+    // solo se mantienen k vecinos
     if (vecinos.size() > k_vecinos) {
         auto it = vecinos.end();
         it--;
